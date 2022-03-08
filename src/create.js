@@ -1,12 +1,16 @@
-import { displayLog } from './utils';
-import { of, interval, zip } from 'rxjs';
-
+import { Observable } from "rxjs";
+import { displayLog } from "./utils"
 export default () => {
     /** start coding */
 
-    const src1 = interval(300);
-    const src2 = "Hello World!";
-    zip(src1, src2).subscribe(x =>displayLog(x[1]));
+    const hello = new Observable (function(observer) {
+        observer.next("Hello");
+        setTimeout(() => {
+            observer.next("World");
+        }, 2000);
+        
+    });
 
+    const subscribe = hello.subscribe((data) => displayLog(data));
     /** end coding */
 }
