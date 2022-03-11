@@ -1,6 +1,6 @@
 import { displayLog } from './utils';
 import { fromEvent } from 'rxjs';
-import { map, takeWhile, tap } from 'rxjs/operators';
+import { map, takeWhile, tap, startWith, endWith } from 'rxjs/operators';
 
 export default () => {
     /** start coding */
@@ -12,6 +12,9 @@ export default () => {
         ]),
         takeWhile( ([col, row]) => col != 0 ),
         tap(val => console.log(`cell: [${val}]`)),
+        // Es importante el orden, no es viable ponerlo antes del map
+        startWith("grid dimension", "10x10"),
+        endWith("---------")
     );
 
     const subscription = click$.subscribe(data => displayLog(data));
