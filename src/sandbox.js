@@ -1,6 +1,7 @@
 import { updateDisplay } from './utils';
 import { fromEvent } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+// Añadimos el operador 'pairwise'
+import { map, tap, pairwise } from 'rxjs/operators';
 
 export default () => {
     /** start coding */
@@ -13,7 +14,15 @@ export default () => {
     //observable that returns scroll (from top) on scroll events
     const scroll$ = fromEvent(document, 'scroll').pipe(
         map(() => docElement.scrollTop),
-        tap(evt => console.log("[scroll]: ", evt))
+        tap(evt => console.log("[scroll]: ", evt)),
+        // añadimos el operador para almacenar la posición anterior
+        pairwise(),
+        // Mostrar la dirección teniendo en cuenta su posición anterior y la actual
+        tap(([previous, current]) => {
+            updateDisplay(current > previous ? 'DESC' : 'ASC')
+        }),
+        // Devolvemos la posición actual para poder seguir con el flujo de información
+        map(([_, current]) => current)
     );
 
     //observable that returns the amount of page scroll progress
@@ -25,7 +34,7 @@ export default () => {
     )
 
     //subscribe to scroll progress to paint a progress bar
-    const subscription = scrollProgress$.subscribe(updateProgressBar);
+    scrollProgress$.subscribe(updateProgressBar);
 
     /** end coding */
 }
