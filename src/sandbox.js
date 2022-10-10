@@ -1,22 +1,24 @@
 import { displayLog } from './utils';
 import { fromEvent } from 'rxjs';
-import { map, takeWhile, tap } from 'rxjs/operators';
+import { map, tap, distinct } from 'rxjs/operators';
 
 export default () => {
     /** start coding */
     const grid = document.getElementById('grid');
     const click$ = fromEvent(grid, 'click').pipe(
+        // Obtener el valor de la columna y fila
         map(val => [ 
             Math.floor(val.offsetX/50), 
             Math.floor(val.offsetY/50)
         ]),
-        takeWhile( ([col, row]) => col != 0 ),
-        tap(val => console.log(`cell: [${val}]`)),
-        map(([col, row]) => col+row),
-        tap(val => console.log('sum of col + row is:', val)),
+        map((val) => `${val[0]}-${val[1]}`),
+        tap(val => console.log('select column / row', val)),
+        // Mostrará en la UI si el valor de la suma de columna + fila
+        // es diferente a lo que se ha mostrado anteriormente
+        distinct()
     );
 
-    const subscription = click$.subscribe(data => displayLog(data));
+    click$.subscribe(data => displayLog(data));
 
     /** end coding */
 }
